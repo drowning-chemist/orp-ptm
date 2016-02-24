@@ -1,5 +1,7 @@
 from bioservices.picr import PICR
 import csv
+import time
+import progressbar
 
 def getPDBAccess(p, uniprot):
 	# contact PICR database
@@ -43,7 +45,8 @@ def main(argv=None):
 	pdbList = []
 	numEntries = []
 	p = PICR()
-	for entry in entries:
+	bar = progressbar.ProgressBar()
+	for entry in bar(entries):
 		num, pdb = getPDBAccess(p, entry)
 		numEntries.append(num)
 		pdbList.append("; ".join(pdb))
