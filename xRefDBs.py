@@ -13,34 +13,31 @@ def getPDBAccess(p, uniprot):
 	if(entries > 0):
 		for access in res.findAll('accession'):
 			pdbList.append(access.get_text())
-	return (entries, pdbList)
+	return entries, pdbList
 		
 def readPhosphoSite(fname):
 	numEntry = []
 	site = []
-	#print("before open")
 	with open(fname, 'rb') as csvfile:
 		reader = csv.reader(csvfile, delimiter=',')
-		#print("successfully open")
 		for row in reader:
-			#print(", ".join(row))
 			numEntry.append(row[0])
 			site.append(row[1])
 	return numEntry, site
 
-def writeXRefs(fname, uniprotList, entriesList, pdbList):
+def writeXRefs(fname, uniprotList, sites, entriesList, pdbList):
 	with open(fname, 'wb') as csvfile:
-		writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMUM)
-		for i in len(uniprotList):
-			writer.writerow(uniprotList[i], entriesList[i], pdbList[i])
+		writer = csv.writer(csvfile, delimiter=',', quotechar='|')
+		for i in range(len(uniprotList)):
+			writer.writerow([uniprotList[i], sites[i], entriesList[i], pdbList[i]])
 			
 def main(argv=None):
 	# settings
 	inFile = 'phosphoSite.csv'
-	outFile = 'phophoSite.xref.csv'
+	outFile = 'phosphoSite.xref.csv'
 	
 	# parse input file
-	entries, site = readPhosphoSite(inFile)
+	entries, sites = readPhosphoSite(inFile)
 	
 	# populate lists
 	pdbList = []
@@ -52,7 +49,7 @@ def main(argv=None):
 		pdbList.append("; ".join(pdb))
 	
 	# write file
-	writeXRefs(outFile, entries, numEntries, pdbList)
+	writeXRefs(outFile, entries, sites, numEntries, pdbList)
 	
 if __name__=="__main__":
 	main()
